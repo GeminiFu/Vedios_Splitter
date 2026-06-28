@@ -108,9 +108,13 @@ function HomeScreen(): React.JSX.Element {
           ) : (
             <TouchableOpacity
               style={styles.splitButton}
-              onPress={handleSplit}>
+              onPress={() => navigation.navigate('Preview', {
+                uri: video.uri,
+                duration: video.duration,
+                segmentDuration,
+              })}>
               <Text style={styles.splitButtonText}>
-                {t('home.startSplit')}
+                {t('home.next')}
               </Text>
             </TouchableOpacity>
           )}

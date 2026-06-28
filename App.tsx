@@ -16,10 +16,16 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useTranslation} from 'react-i18next';
 import {LANGUAGES} from './src/i18n';
 import HomeScreen from './src/screens/HomeScreen';
+import PreviewScreen from './src/screens/PreviewScreen';
 import ResultScreen from './src/screens/ResultScreen';
 
 export type RootStackParamList = {
   Home: undefined;
+  Preview: {
+    uri: string;
+    duration: number;
+    segmentDuration: number;
+  };
   Result: {
     segments: {
       fileName: string;
@@ -93,6 +99,11 @@ function AppNavigator() {
           title: 'VideoSplitter',
           headerRight: () => <LanguagePicker />,
         }}
+      />
+      <Stack.Screen
+        name="Preview"
+        component={PreviewScreen}
+        options={{title: ''}}
       />
       <Stack.Screen
         name="Result"

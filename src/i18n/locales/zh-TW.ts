@@ -24,6 +24,15 @@ export default {
     videoErrorMsg: '請選擇其他影片',
     splitFailed: '分割失敗',
     splitInfo: '分割資訊',
+    next: '下一步',
+  },
+  // 影片預覽畫面
+  preview: {
+  title: '影片預覽',
+  startSplit: '開始分割',
+  reset: '重置',
+  undo: '復原',
+  deletePoint: '刪除',
   },
   // 結果畫面
   result: {

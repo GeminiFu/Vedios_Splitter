@@ -21,10 +21,12 @@
     "react-i18next": "^17.0.8",
     "react-native": "0.86.0",
     "react-native-fs": "^2.20.0",
+    "react-native-nitro-modules": "^0.35.10",
     "react-native-progress": "^5.0.1",
     "react-native-safe-area-context": "^5.8.0",
     "react-native-screens": "^4.25.2",
-    "react-native-vector-icons": "^10.3.0"
+    "react-native-vector-icons": "^10.3.0",
+    "react-native-video": "^7.0.0-beta.10"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

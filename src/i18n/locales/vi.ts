@@ -22,6 +22,14 @@ export default {
     videoErrorMsg: 'Vui lòng chọn video khác',
     splitFailed: 'Cắt thất bại',
     splitInfo: 'Thông tin cắt',
+    next: 'Tiếp theo'
+  },
+  preview: {
+  title: 'Xem trước video',
+  startSplit: 'Bắt đầu cắt',
+  reset: 'Đặt lại',
+  undo: 'Hoàn tác',
+  deletePoint: 'Xóa',
   },
   result: {
     title: 'Kết quả cắt',

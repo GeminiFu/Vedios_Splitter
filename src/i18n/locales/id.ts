@@ -22,6 +22,14 @@ export default {
     videoErrorMsg: 'Pilih video lain',
     splitFailed: 'Pemotongan Gagal',
     splitInfo: 'Info Pemotongan',
+    next: 'Selanjutnya'
+  },
+  preview: {
+  title: 'Pratinjau Video',
+  startSplit: 'Mulai Memotong',
+  reset: 'Atur Ulang',
+  undo: 'Batalkan',
+  deletePoint: 'Hapus',
   },
   result: {
     title: 'Hasil Pemotongan',

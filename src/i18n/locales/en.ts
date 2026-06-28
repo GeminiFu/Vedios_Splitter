@@ -22,6 +22,14 @@ export default {
     videoErrorMsg: 'Please select another video',
     splitFailed: 'Split Failed',
     splitInfo: 'Split Info',
+    next: 'Next'
+  },
+  preview: {
+  title: 'Video Preview',
+  startSplit: 'Start Splitting',
+  reset: 'Reset',
+  undo: 'Undo',
+  deletePoint: 'Delete',
   },
   result: {
     title: 'Split Result',

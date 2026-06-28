@@ -22,6 +22,14 @@ export default {
     videoErrorMsg: '请选择其他视频',
     splitFailed: '分割失败',
     splitInfo: '分割信息',
+    next: '下一步',
+  },
+  preview: {
+  title: '视频预览',
+  startSplit: '开始分割',
+  reset: '重置',
+  undo: '撤销',
+  deletePoint: '删除',
   },
   result: {
     title: '分割结果',
