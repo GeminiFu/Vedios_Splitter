@@ -73,8 +73,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     paddingVertical: 12,
     borderRadius: 8,
-    minWidth: 120,
+    width: 160,           // 固定寬度
+    height: 48,           // 固定高度
     alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonDisabled: {
     backgroundColor: '#90CAF9',

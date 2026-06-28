@@ -18,7 +18,6 @@ import {splitVideo, videoSplitterEmitter} from '../utils/VideoSplitterModule';
 import {generatePrefix} from '../utils/fileHelper';
 import {RootStackParamList} from '../../App';
 import RNFS from 'react-native-fs';
-import {LANGUAGES} from '../i18n';
 
 interface VideoInfo {
   uri: string;
@@ -29,7 +28,7 @@ interface VideoInfo {
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
 function HomeScreen(): React.JSX.Element {
-  const {t, i18n} = useTranslation();
+  const {t} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const [video, setVideo] = useState<VideoInfo | null>(null);
   const [segmentDuration, setSegmentDuration] = useState(30);
