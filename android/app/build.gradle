@@ -105,7 +105,8 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
- 
+    
+    apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 }
 
 ext {

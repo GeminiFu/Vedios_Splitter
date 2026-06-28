@@ -11,11 +11,12 @@ import {
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';
 import {CameraRoll} from '@react-native-camera-roll/camera-roll';
-import RNFS from 'react-native-fs';
+import {useTranslation} from 'react-i18next';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Result'>;
 
 function ResultScreen({route}: Props): React.JSX.Element {
+  const {t} = useTranslation();
   const {segments} = route.params;
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -24,14 +25,15 @@ function ResultScreen({route}: Props): React.JSX.Element {
     setSaving(true);
     try {
       for (const segment of segments) {
-        await CameraRoll.saveAsset(`file://${segment.path}`, {
-          type: 'video',
-        });
+        await CameraRoll.saveAsset(`file://${segment.path}`, {type: 'video'});
       }
       setSaved(true);
-      Alert.alert('儲存成功', `已將 ${segments.length} 個片段儲存到相簿`);
+      Alert.alert(
+        t('result.saveSuccess'),
+        t('result.saveSuccessMsg', {count: segments.length}),
+      );
     } catch (err: any) {
-      Alert.alert('儲存失敗', err.message);
+      Alert.alert(t('result.saveFailed'), err.message);
     } finally {
       setSaving(false);
     }
@@ -51,7 +53,7 @@ function ResultScreen({route}: Props): React.JSX.Element {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerText}>
-          處理完成，共 {segments.length} 個片段
+          {t('result.completed')} {segments.length} {t('result.segments')}
         </Text>
       </View>
 
@@ -68,7 +70,7 @@ function ResultScreen({route}: Props): React.JSX.Element {
                 {item.fileName}
               </Text>
               <Text style={styles.duration}>
-                時長：{formatDuration(item.duration)}
+                {t('result.fileDuration')}：{formatDuration(item.duration)}
               </Text>
             </View>
           </View>
@@ -77,17 +79,14 @@ function ResultScreen({route}: Props): React.JSX.Element {
       />
 
       <TouchableOpacity
-        style={[
-          styles.saveButton,
-          (saving || saved) && styles.saveButtonDisabled,
-        ]}
+        style={[styles.saveButton, (saving || saved) && styles.saveButtonDisabled]}
         onPress={handleSave}
         disabled={saving || saved}>
         {saving ? (
           <ActivityIndicator color="#fff" />
         ) : (
           <Text style={styles.saveButtonText}>
-            {saved ? '✓ 已儲存到相簿' : '儲存到相簿'}
+            {saved ? t('result.saved') : t('result.saveToGallery')}
           </Text>
         )}
       </TouchableOpacity>

@@ -1,5 +1,6 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
+import {useTranslation} from 'react-i18next';
 
 interface Props {
   totalDuration: number;
@@ -7,18 +8,23 @@ interface Props {
 }
 
 function SplitInfo({totalDuration, segmentDuration}: Props): React.JSX.Element {
+  const {t} = useTranslation();
   const segmentCount = Math.ceil(totalDuration / segmentDuration);
   const lastSegmentDuration = totalDuration % segmentDuration || segmentDuration;
   const isLastSegmentShort = lastSegmentDuration < segmentDuration;
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>分割資訊</Text>
-      <Text style={styles.info}>分割時長：{segmentDuration} 秒</Text>
-      <Text style={styles.info}>共會分割成：{segmentCount} 個片段</Text>
+      <Text style={styles.title}>{t('home.splitInfo')}</Text>
+      <Text style={styles.info}>
+        {t('home.segmentDuration')}：{segmentDuration} {t('home.seconds')}
+      </Text>
+      <Text style={styles.info}>
+        {t('home.segmentCount')} {segmentCount} {t('home.segmentUnit')}
+      </Text>
       {isLastSegmentShort && (
         <Text style={styles.warning}>
-          ⚠️ 最後一段時長：{lastSegmentDuration.toFixed(1)} 秒
+          {t('home.lastSegment')}：{lastSegmentDuration.toFixed(1)} {t('home.seconds')}
         </Text>
       )}
     </View>

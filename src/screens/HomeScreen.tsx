@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useRef} from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useTranslation} from 'react-i18next';
 import VideoSelector from '../components/VideoSelector';
 import DurationSlider from '../components/DurationSlider';
 import SplitInfo from '../components/SplitInfo';
@@ -17,6 +18,7 @@ import {splitVideo, videoSplitterEmitter} from '../utils/VideoSplitterModule';
 import {generatePrefix} from '../utils/fileHelper';
 import {RootStackParamList} from '../../App';
 import RNFS from 'react-native-fs';
+import {LANGUAGES} from '../i18n';
 
 interface VideoInfo {
   uri: string;
@@ -27,6 +29,7 @@ interface VideoInfo {
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
 function HomeScreen(): React.JSX.Element {
+  const {t, i18n} = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const [video, setVideo] = useState<VideoInfo | null>(null);
   const [segmentDuration, setSegmentDuration] = useState(30);
@@ -35,13 +38,7 @@ function HomeScreen(): React.JSX.Element {
   const [currentSegment, setCurrentSegment] = useState(0);
   const [totalSegments, setTotalSegments] = useState(0);
   const listenerRef = useRef<any>(null);
-
-  useEffect(() => {
-    return () => {
-      listenerRef.current?.remove();
-    };
-  }, []);
-
+  
   const handleSplit = async () => {
     if (!video) return;
 
@@ -74,7 +71,7 @@ function HomeScreen(): React.JSX.Element {
       listenerRef.current?.remove();
       navigation.navigate('Result', {segments});
     } catch (err: any) {
-      Alert.alert('分割失敗', err.message);
+      Alert.alert(t('home.splitFailed'), err.message);
     } finally {
       setProcessing(false);
     }
@@ -82,13 +79,17 @@ function HomeScreen(): React.JSX.Element {
 
   return (
     <ScrollView style={styles.container}>
+
       <VideoSelector onVideoSelected={setVideo} />
+
       {video && (
         <>
           <View style={styles.infoBox}>
-            <Text style={styles.infoText}>已選擇：{video.name}</Text>
             <Text style={styles.infoText}>
-              時長：{video.duration.toFixed(1)} 秒
+              {t('home.selected')}：{video.name}
+            </Text>
+            <Text style={styles.infoText}>
+              {t('home.duration')}：{video.duration.toFixed(1)} {t('home.seconds')}
             </Text>
           </View>
           <DurationSlider
@@ -109,7 +110,9 @@ function HomeScreen(): React.JSX.Element {
             <TouchableOpacity
               style={styles.splitButton}
               onPress={handleSplit}>
-              <Text style={styles.splitButtonText}>開始分割</Text>
+              <Text style={styles.splitButtonText}>
+                {t('home.startSplit')}
+              </Text>
             </TouchableOpacity>
           )}
         </>

@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Alert, ActivityIndicator} from 'react-native';
 import {pick, types} from '@react-native-documents/picker';
 import {getVideoDuration} from '../utils/ffmpeg';
+import {useTranslation} from 'react-i18next';
 
 interface VideoInfo {
   uri: string;
@@ -14,6 +15,7 @@ interface Props {
 }
 
 function VideoSelector({onVideoSelected}: Props): React.JSX.Element {
+  const {t} = useTranslation();
   const [loading, setLoading] = useState(false);
 
   const handlePick = async () => {
@@ -24,12 +26,12 @@ function VideoSelector({onVideoSelected}: Props): React.JSX.Element {
       const duration = await getVideoDuration(file.uri);
 
       if (duration === 0) {
-        Alert.alert('無法讀取影片', '請選擇其他影片');
+        Alert.alert(t('home.videoError'), t('home.videoErrorMsg'));
         return;
       }
 
       if (duration > 600) {
-        Alert.alert('影片過長', '請選擇 10 分鐘以內的影片');
+        Alert.alert(t('home.videoTooLong'), t('home.videoTooLongMsg'));
         return;
       }
 
@@ -54,7 +56,7 @@ function VideoSelector({onVideoSelected}: Props): React.JSX.Element {
         {loading ? (
           <ActivityIndicator color="#fff" />
         ) : (
-          <Text style={styles.buttonText}>選擇影片</Text>
+          <Text style={styles.buttonText}>{t('home.selectVideo')}</Text>
         )}
       </TouchableOpacity>
     </View>

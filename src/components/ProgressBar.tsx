@@ -1,17 +1,20 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
+import {useTranslation} from 'react-i18next';
 
 interface Props {
-  progress: number; // 0~1
+  progress: number;
   current: number;
   total: number;
 }
 
 function ProgressBar({progress, current, total}: Props): React.JSX.Element {
+  const {t} = useTranslation();
+
   return (
     <View style={styles.container}>
       <Text style={styles.label}>
-        處理中：{current} / {total} 個片段
+        {t('progress.processing')}：{current} / {total} {t('progress.segment')}
       </Text>
       <View style={styles.track}>
         <View style={[styles.fill, {width: `${progress * 100}%`}]} />
