@@ -96,14 +96,14 @@ function AppNavigator() {
         name="Home"
         component={HomeScreen}
         options={{
-          title: 'VideoSplitter',
+          title: t('home.title'),
           headerRight: () => <LanguagePicker />,
         }}
       />
       <Stack.Screen
         name="Preview"
         component={PreviewScreen}
-        options={{title: ''}}
+        options={{title: t('preview.title')}}
       />
       <Stack.Screen
         name="Result"
