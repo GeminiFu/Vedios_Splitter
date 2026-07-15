@@ -2,6 +2,7 @@ import './src/i18n';
 import i18n from './src/i18n';
 import {I18nextProvider} from 'react-i18next';
 import React, {useState} from 'react';
+
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {
@@ -11,6 +12,7 @@ import {
   StyleSheet,
   Modal,
   Pressable,
+  Linking,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useTranslation} from 'react-i18next';
@@ -18,6 +20,9 @@ import {LANGUAGES} from './src/i18n';
 import HomeScreen from './src/screens/HomeScreen';
 import PreviewScreen from './src/screens/PreviewScreen';
 import ResultScreen from './src/screens/ResultScreen';
+import {LicenseProvider} from './src/contexts/LicenseContext';
+import PaywallModal from './src/components/PaywallModal';
+import WelcomeModal from './src/components/WelcomeModal';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -87,6 +92,21 @@ function LanguagePicker() {
   );
 }
 
+function FeedbackButton() {
+  const handleFeedback = () => {
+    const email = 'gemini860612@gmail.com';
+    const subject = encodeURIComponent('VideoSplitter Feedback');
+    const url = `mailto:${email}?subject=${subject}`;
+    Linking.openURL(url).catch(() => {});
+  };
+
+  return (
+    <TouchableOpacity onPress={handleFeedback} style={styles.feedbackIcon}>
+      <Icon name="email" size={24} color="#2196F3" />
+    </TouchableOpacity>
+  );
+}
+
 function AppNavigator() {
   const {t} = useTranslation();
 
@@ -97,29 +117,40 @@ function AppNavigator() {
         component={HomeScreen}
         options={{
           title: t('home.title'),
-          headerRight: () => <LanguagePicker />,
+          headerRight: () => (
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <FeedbackButton />
+              <LanguagePicker />
+            </View>
+          ),
         }}
       />
+
       <Stack.Screen
         name="Preview"
         component={PreviewScreen}
-        options={{title: t('preview.title')}}
+        options={{ title: t('preview.title') }}
       />
       <Stack.Screen
         name="Result"
         component={ResultScreen}
-        options={{title: t('result.title')}}
+        options={{ title: t('result.title') }}
       />
     </Stack.Navigator>
   );
 }
 
+
 function App(): React.JSX.Element {
   return (
     <I18nextProvider i18n={i18n}>
-      <NavigationContainer>
-        <AppNavigator />
-      </NavigationContainer>
+      <LicenseProvider>
+        <NavigationContainer>
+          <AppNavigator />
+        </NavigationContainer>
+        <WelcomeModal />
+        <PaywallModal />
+      </LicenseProvider>
     </I18nextProvider>
   );
 }
@@ -141,7 +172,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     elevation: 6,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
     minWidth: 180,
@@ -166,6 +197,9 @@ const styles = StyleSheet.create({
   menuTextActive: {
     color: '#2196F3',
     fontWeight: 'bold',
+  },
+  feedbackIcon: {
+    paddingHorizontal: 8,
   },
 });
 

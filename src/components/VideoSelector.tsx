@@ -12,13 +12,15 @@ interface VideoInfo {
 
 interface Props {
   onVideoSelected: (video: VideoInfo) => void;
+  onBeforePick?: () => boolean;
 }
 
-function VideoSelector({onVideoSelected}: Props): React.JSX.Element {
-  const {t} = useTranslation();
+function VideoSelector({onVideoSelected, onBeforePick}: Props): React.JSX.Element {  const {t} = useTranslation();
   const [loading, setLoading] = useState(false);
 
   const handlePick = async () => {
+    if (onBeforePick && !onBeforePick()) return;   // 試用到期 → 跳付費牆，不開選取器
+    
     try {
       const [file] = await pick({type: [types.video]});
       setLoading(true);

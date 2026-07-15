@@ -46,10 +46,25 @@ export default {
     saveSuccess: '儲存成功',
     saveSuccessMsg: '已將 {{count}} 個片段儲存到相簿',
     saveFailed: '儲存失敗',
+    share: '分享', 
+    shareFailed: '分享失敗'
   },
   // 進度條
   progress: {
     processing: '處理中',
     segment: '個片段',
   },
+  paywall: {
+  trialTitle: '歡迎使用',
+  trialMessage: '你可以免費試用完整功能 30 天，期間沒有任何限制。',
+  trialConfirm: '開始使用',
+  trialRemaining: '試用剩餘 {{days}} 天',
+  trialExpired: '試用已到期',
+  title: '解鎖完整功能',
+  description: '你的 30 天免費試用已結束。一次付費即可永久使用，沒有訂閱、沒有額外費用。',
+  price: 'NT$39',
+  priceNote: '一次性付款，永久解鎖',
+  purchase: '立即解鎖',
+  restore: '還原購買',
+},
 };

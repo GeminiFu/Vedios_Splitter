@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
   Text,
@@ -18,6 +18,8 @@ import {splitVideo, videoSplitterEmitter} from '../utils/VideoSplitterModule';
 import {generatePrefix} from '../utils/fileHelper';
 import {RootStackParamList} from '../../App';
 import RNFS from 'react-native-fs';
+import {useLicense} from '../contexts/LicenseContext';
+import {__devSetTrialStartedDaysAgo, __devResetTrial} from '../utils/trialManager';
 
 interface VideoInfo {
   uri: string;
@@ -37,7 +39,14 @@ function HomeScreen(): React.JSX.Element {
   const [currentSegment, setCurrentSegment] = useState(0);
   const [totalSegments, setTotalSegments] = useState(0);
   const listenerRef = useRef<any>(null);
+  const {isPurchased, daysRemaining, isExpired, requireAccess} = useLicense();
   
+  // 模擬試用已用掉 31 天 → 重開 App 就會看到付費牆
+  // __devSetTrialStartedDaysAgo(31);
+
+  // 清空所有狀態 → 重開 App 會看到首次歡迎彈窗
+  // __devResetTrial;
+
   const handleSplit = async () => {
     if (!video) return;
 
@@ -78,8 +87,19 @@ function HomeScreen(): React.JSX.Element {
 
   return (
     <ScrollView style={styles.container}>
-
-      <VideoSelector onVideoSelected={setVideo} />
+      {!isPurchased && (
+        <View style={[styles.trialBar, isExpired && styles.trialBarExpired]}>
+          <Text style={[styles.trialText, isExpired && styles.trialTextExpired]}>
+            {isExpired
+              ? t('paywall.trialExpired')
+              : t('paywall.trialRemaining', {days: daysRemaining})}
+          </Text>
+        </View>
+      )}
+      <VideoSelector
+        onVideoSelected={setVideo}
+        onBeforePick={requireAccess}
+      />
 
       {video && (
         <>
@@ -149,6 +169,23 @@ const styles = StyleSheet.create({
   splitButtonText: {
     color: '#fff',
     fontSize: 18,
+    fontWeight: 'bold',
+  },
+  trialBar: {
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+    backgroundColor: '#E3F2FD',
+    alignItems: 'center',
+  },
+  trialBarExpired: {
+    backgroundColor: '#FFEBEE',
+  },
+  trialText: {
+    fontSize: 12,
+    color: '#1565C0',
+  },
+  trialTextExpired: {
+    color: '#C62828',
     fontWeight: 'bold',
   },
 });

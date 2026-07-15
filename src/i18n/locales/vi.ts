@@ -42,9 +42,24 @@ export default {
     saveSuccess: 'Lưu thành công',
     saveSuccessMsg: 'Đã lưu {{count}} đoạn vào thư viện',
     saveFailed: 'Lưu thất bại',
+    share: 'Chia sẻ', 
+    shareFailed: 'Chia sẻ thất bại'
   },
   progress: {
     processing: 'Đang xử lý',
     segment: 'đoạn',
   },
+  paywall: {
+  trialTitle: 'Chào mừng',
+  trialMessage: 'Dùng thử đầy đủ tính năng miễn phí trong 30 ngày, không giới hạn.',
+  trialConfirm: 'Bắt đầu',
+  trialRemaining: 'Còn {{days}} ngày dùng thử',
+  trialExpired: 'Đã hết hạn dùng thử',
+  title: 'Mở khóa toàn bộ tính năng',
+  description: 'Thời gian dùng thử 30 ngày đã kết thúc. Thanh toán một lần và dùng mãi mãi — không đăng ký, không phí phát sinh.',
+  price: 'NT$39',
+  priceNote: 'Thanh toán một lần, mở khóa vĩnh viễn',
+  purchase: 'Mở khóa ngay',
+  restore: 'Khôi phục giao dịch',
+},
 };

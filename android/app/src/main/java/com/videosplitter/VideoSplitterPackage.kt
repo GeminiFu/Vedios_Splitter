@@ -7,7 +7,10 @@ import com.facebook.react.uimanager.ViewManager
 
 class VideoSplitterPackage : ReactPackage {
     override fun createNativeModules(reactContext: ReactApplicationContext):
-        List<NativeModule> = listOf(VideoSplitterModule(reactContext))
+        List<NativeModule> = listOf(
+            VideoSplitterModule(reactContext),
+            VideoShareModule(reactContext)
+        )
 
     override fun createViewManagers(reactContext: ReactApplicationContext):
         List<ViewManager<*, *>> = emptyList()

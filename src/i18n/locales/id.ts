@@ -42,9 +42,24 @@ export default {
     saveSuccess: 'Berhasil Disimpan',
     saveSuccessMsg: '{{count}} segmen disimpan ke galeri',
     saveFailed: 'Gagal Menyimpan',
+    share: 'Bagikan', 
+    shareFailed: 'Gagal Membagikan'
   },
   progress: {
     processing: 'Memproses',
     segment: 'segmen',
   },
+  paywall: {
+  trialTitle: 'Selamat datang',
+  trialMessage: 'Nikmati akses penuh gratis selama 30 hari, tanpa batasan.',
+  trialConfirm: 'Mulai',
+  trialRemaining: 'Sisa {{days}} hari masa coba',
+  trialExpired: 'Masa coba berakhir',
+  title: 'Buka Akses Penuh',
+  description: 'Masa coba gratis 30 hari Anda telah berakhir. Bayar sekali dan pakai selamanya — tanpa langganan, tanpa biaya tambahan.',
+  price: 'NT$39',
+  priceNote: 'Pembayaran sekali, terbuka selamanya',
+  purchase: 'Buka Sekarang',
+  restore: 'Pulihkan Pembelian',
+},
 };

@@ -12,6 +12,7 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';
 import {CameraRoll} from '@react-native-camera-roll/camera-roll';
 import {useTranslation} from 'react-i18next';
+import {shareVideos} from '../utils/ShareModule';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Result'>;
 
@@ -36,6 +37,15 @@ function ResultScreen({route}: Props): React.JSX.Element {
       Alert.alert(t('result.saveFailed'), err.message);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleShare = async () => {
+    console.log('NativeModules keys:', Object.keys(require('react-native').NativeModules));
+    try {
+      await shareVideos(segments.map(s => s.path));
+    } catch (err: any) {
+      Alert.alert(t('result.shareFailed'), err.message);
     }
   };
 
@@ -78,6 +88,10 @@ function ResultScreen({route}: Props): React.JSX.Element {
         contentContainerStyle={styles.list}
       />
 
+      <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
+        <Text style={styles.shareButtonText}>{t('result.share')}</Text>
+      </TouchableOpacity>
+      
       <TouchableOpacity
         style={[styles.saveButton, (saving || saved) && styles.saveButtonDisabled]}
         onPress={handleSave}
@@ -159,6 +173,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#A5D6A7',
   },
   saveButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  shareButton: {
+  marginHorizontal: 16,
+  marginTop: 16,
+  backgroundColor: '#E1306C',
+  padding: 16,
+  borderRadius: 8,
+  alignItems: 'center',
+  },
+  shareButtonText: {
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',

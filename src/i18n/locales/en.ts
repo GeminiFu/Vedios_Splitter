@@ -42,9 +42,24 @@ export default {
     saveSuccess: 'Saved Successfully',
     saveSuccessMsg: '{{count}} segments saved to gallery',
     saveFailed: 'Save Failed',
+    share: 'Share', 
+    shareFailed: 'Share Failed'
   },
   progress: {
     processing: 'Processing',
     segment: 'segments',
   },
+  paywall: {
+  trialTitle: 'Welcome',
+  trialMessage: 'Enjoy full access free for 30 days, with no restrictions.',
+  trialConfirm: 'Get Started',
+  trialRemaining: '{{days}} days left in trial',
+  trialExpired: 'Trial expired',
+  title: 'Unlock Full Access',
+  description: 'Your 30-day free trial has ended. Pay once and use it forever — no subscription, no extra fees.',
+  price: 'NT$39',
+  priceNote: 'One-time payment, unlocked forever',
+  purchase: 'Unlock Now',
+  restore: 'Restore Purchase',
+},
 };
