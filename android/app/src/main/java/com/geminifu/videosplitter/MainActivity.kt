@@ -1,4 +1,4 @@
-package com.videosplitter
+package com.geminifu.videosplitter
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

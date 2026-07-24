@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   Pressable,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useTranslation} from 'react-i18next';
@@ -13,15 +15,21 @@ import {useLicense} from '../contexts/LicenseContext';
 
 function PaywallModal(): React.JSX.Element {
   const {t} = useTranslation();
-  const {showPaywall, closePaywall, markPurchased} = useLicense();
-
-  const handlePurchase = async () => {
-    // TODO: 接上 Google Play Billing
-    await markPurchased();
-  };
+  const {
+    showPaywall,
+    closePaywall,
+    buy,
+    restore,
+    localizedPrice,
+    purchasing,
+    restoring,
+  } = useLicense();
 
   const handleRestore = async () => {
-    // TODO: 接上 Billing 的購買紀錄查詢
+    const ok = await restore();
+    if (!ok) {
+      Alert.alert(t('paywall.restoreFailed'), t('paywall.restoreFailedMsg'));
+    }
   };
 
   return (
@@ -41,16 +49,27 @@ function PaywallModal(): React.JSX.Element {
           <Text style={styles.description}>{t('paywall.description')}</Text>
 
           <View style={styles.priceBox}>
-            <Text style={styles.price}>{t('paywall.price')}</Text>
+            <Text style={styles.price}>
+              {localizedPrice ?? t('paywall.price')}
+            </Text>
             <Text style={styles.priceNote}>{t('paywall.priceNote')}</Text>
           </View>
 
-          <TouchableOpacity style={styles.buyBtn} onPress={handlePurchase}>
-            <Text style={styles.buyBtnText}>{t('paywall.purchase')}</Text>
+          <TouchableOpacity
+            style={[styles.buyBtn, purchasing && styles.buyBtnDisabled]}
+            onPress={buy}
+            disabled={purchasing}>
+            {purchasing ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.buyBtnText}>{t('paywall.purchase')}</Text>
+            )}
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={handleRestore}>
-            <Text style={styles.restoreText}>{t('paywall.restore')}</Text>
+          <TouchableOpacity onPress={handleRestore} disabled={restoring}>
+            <Text style={styles.restoreText}>
+              {restoring ? t('paywall.restoring') : t('paywall.restore')}
+            </Text>
           </TouchableOpacity>
         </Pressable>
       </Pressable>
@@ -116,7 +135,12 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 8,
     alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 50,
     marginBottom: 12,
+  },
+  buyBtnDisabled: {
+    backgroundColor: '#A5D6A7',
   },
   buyBtnText: {
     color: '#fff',

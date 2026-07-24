@@ -61,5 +61,8 @@ export default {
   priceNote: '一次性付款，永久解锁',
   purchase: '立即解锁',
   restore: '恢复购买',
+  restoring: '恢复中…',
+  restoreFailed: '找不到购买记录',
+  restoreFailedMsg: '这个 Google 账号没有购买记录。请确认你登录的是当初购买时使用的账号。',
 },
 };

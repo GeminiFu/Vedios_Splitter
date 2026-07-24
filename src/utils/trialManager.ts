@@ -42,13 +42,13 @@ export const setLocalPurchased = async (value: boolean): Promise<void> => {
   await AsyncStorage.setItem(KEY_PURCHASED, String(value));
 };
 
-// ── 開發測試用，正式版前移除 ──
-export const __devResetTrial = async () => {
-  await AsyncStorage.removeItem(KEY_FIRST_LAUNCH);
-  await AsyncStorage.removeItem(KEY_PURCHASED);
-};
+// // ── 開發測試用，正式版前移除 ──
+// export const __devResetTrial = async () => {
+//   await AsyncStorage.removeItem(KEY_FIRST_LAUNCH);
+//   await AsyncStorage.removeItem(KEY_PURCHASED);
+// };
 
-export const __devSetTrialStartedDaysAgo = async (days: number) => {
-  const date = new Date(Date.now() - days * 86400000).toISOString();
-  await AsyncStorage.setItem(KEY_FIRST_LAUNCH, date);
-};
+// export const __devSetTrialStartedDaysAgo = async (days: number) => {
+//   const date = new Date(Date.now() - days * 86400000).toISOString();
+//   await AsyncStorage.setItem(KEY_FIRST_LAUNCH, date);
+// };

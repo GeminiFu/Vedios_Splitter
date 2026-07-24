@@ -1,4 +1,4 @@
-package com.videosplitter
+package com.geminifu.videosplitter
 
 import android.media.*
 import android.net.Uri
@@ -54,6 +54,8 @@ class VideoSplitterModule(private val reactContext: ReactApplicationContext) :
                 )?.toIntOrNull() ?: 0
                 retriever2.release()
 
+                var videoFrameDurationUs = 33334L   // ← 宣告在這裡（for 迴圈外）
+
                 val fd = reactContext.contentResolver.openFileDescriptor(
                     Uri.parse(uriString), "r"
                 ) ?: throw Exception("Cannot open file")
@@ -76,6 +78,21 @@ class VideoSplitterModule(private val reactContext: ReactApplicationContext) :
                     for (t in 0 until extractor.trackCount) {
                         val format = extractor.getTrackFormat(t)
                         val mime = format.getString(MediaFormat.KEY_MIME) ?: ""
+                        
+                        if (mime.startsWith("video/") && format.containsKey(MediaFormat.KEY_FRAME_RATE)) {
+                            val fps = format.getInteger(MediaFormat.KEY_FRAME_RATE)
+                            if (fps > 0) videoFrameDurationUs = 1_000_000L / fps
+                        }
+
+                        // ── 驗證用 log ──
+                        if (mime.startsWith("video/")) {
+                            val fps = if (format.containsKey(MediaFormat.KEY_FRAME_RATE))
+                                format.getInteger(MediaFormat.KEY_FRAME_RATE) else -1
+                            android.util.Log.d("SplitDebug", "video mime=$mime fps=$fps")
+                            android.util.Log.d("SplitDebug", "一幀時長(ms)=${if (fps > 0) 1000.0 / fps else -1.0}")
+                        }
+                        // ────────────
+                        
                         if (mime.startsWith("video/") || mime.startsWith("audio/")) {
                             val muxerTrack = muxer.addTrack(format)
                             trackIndexMap[t] = muxerTrack
@@ -89,6 +106,21 @@ class VideoSplitterModule(private val reactContext: ReactApplicationContext) :
                     muxer.start()
                     extractor.seekTo(startMs * 1000, MediaExtractor.SEEK_TO_CLOSEST_SYNC)
 
+                    // 取得 seek 後的實際起點，作為時間戳基準
+                    val actualStartUs = extractor.sampleTime
+                    if (actualStartUs < 0) {
+                        // seek 落到檔案尾端之後，沒有資料可寫
+                        muxer.release()
+                        extractor.release()
+                        throw Exception("Seek failed at segment $i")
+                    }
+                    val segmentDurationUs = (endMs - startMs) * 1000L
+                    val actualEndUs = actualStartUs + segmentDurationUs - videoFrameDurationUs
+
+                    android.util.Log.d("SplitDebug",
+                        "段 $i：理論起點=${startMs}ms，實際起點=${actualStartUs / 1000.0}ms，" +
+                        "實際終點=${actualEndUs / 1000.0}ms")
+
                     val buffer = java.nio.ByteBuffer.allocate(1024 * 1024)
                     val bufferInfo = MediaCodec.BufferInfo()
 
@@ -101,14 +133,15 @@ class VideoSplitterModule(private val reactContext: ReactApplicationContext) :
                         if (muxerTrack == null) { extractor.advance(); continue }
 
                         val sampleTimeUs = extractor.sampleTime
-                        if (sampleTimeUs > endMs * 1000) { writing = false; continue }
+                        if (sampleTimeUs >= actualEndUs) { writing = false; continue }
 
                         bufferInfo.offset = 0
                         bufferInfo.size = extractor.readSampleData(buffer, 0)
                         if (bufferInfo.size < 0) { writing = false; continue }
 
-                        bufferInfo.presentationTimeUs = sampleTimeUs - startMs * 1000
+                        bufferInfo.presentationTimeUs = sampleTimeUs - actualStartUs                        
                         bufferInfo.flags = extractor.sampleFlags
+
                         muxer.writeSampleData(muxerTrack, buffer, bufferInfo)
                         extractor.advance()
                     }
@@ -116,6 +149,16 @@ class VideoSplitterModule(private val reactContext: ReactApplicationContext) :
                     muxer.stop()
                     muxer.release()
                     extractor.release()
+
+                    // 驗證產出檔案的實際時長
+                    val verifier = MediaMetadataRetriever()
+                    verifier.setDataSource(outputFile.absolutePath)
+                    val outputDurationMs = verifier.extractMetadata(
+                        MediaMetadataRetriever.METADATA_KEY_DURATION
+                    )?.toLong() ?: -1L
+                    verifier.release()
+                    android.util.Log.d("SplitDebug",
+                        "段 $i 產出時長=${outputDurationMs}ms（設定=${endMs - startMs}ms）")
 
                     val segmentInfo = Arguments.createMap()
                     segmentInfo.putString("fileName", fileName)

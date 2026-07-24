@@ -1,4 +1,4 @@
-package com.videosplitter
+package com.geminifu.videosplitter
 
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule

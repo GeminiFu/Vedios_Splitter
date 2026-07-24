@@ -66,5 +66,8 @@ export default {
   priceNote: '一次性付款，永久解鎖',
   purchase: '立即解鎖',
   restore: '還原購買',
+  restoring: '還原中…',
+  restoreFailed: '找不到購買紀錄',
+  restoreFailedMsg: '這個 Google 帳號沒有購買紀錄。請確認你登入的是當初購買時使用的帳號。',
 },
 };

@@ -61,5 +61,8 @@ export default {
   priceNote: 'Thanh toán một lần, mở khóa vĩnh viễn',
   purchase: 'Mở khóa ngay',
   restore: 'Khôi phục giao dịch',
+  restoring: 'Đang khôi phục…',
+  restoreFailed: 'Không tìm thấy giao dịch',
+  restoreFailedMsg: 'Không tìm thấy giao dịch nào cho tài khoản Google này. Hãy đảm bảo bạn đang đăng nhập bằng tài khoản đã dùng để mua.',
 },
 };

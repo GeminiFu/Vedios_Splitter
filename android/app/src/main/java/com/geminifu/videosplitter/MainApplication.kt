@@ -1,4 +1,4 @@
-package com.videosplitter
+package com.geminifu.videosplitter
 
 import android.app.Application
 import com.facebook.react.PackageList

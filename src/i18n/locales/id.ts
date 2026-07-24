@@ -61,5 +61,8 @@ export default {
   priceNote: 'Pembayaran sekali, terbuka selamanya',
   purchase: 'Buka Sekarang',
   restore: 'Pulihkan Pembelian',
+  restoring: 'Memulihkan…',
+  restoreFailed: 'Pembelian Tidak Ditemukan',
+  restoreFailedMsg: 'Tidak ada pembelian untuk akun Google ini. Pastikan Anda masuk dengan akun yang digunakan saat membeli.',
 },
 };

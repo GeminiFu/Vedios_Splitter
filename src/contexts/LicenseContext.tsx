@@ -1,10 +1,22 @@
-import React, {createContext, useContext, useState, useEffect} from 'react';
+import React, {createContext, useContext, useState, useEffect, useRef} from 'react';
 import {
   initTrial,
   getLocalPurchased,
   setLocalPurchased,
   TRIAL_DAYS,
 } from '../utils/trialManager';
+import {
+  initBilling,
+  closeBilling,
+  fetchProduct,
+  purchaseUnlock,
+  checkPurchased,
+  acknowledgePurchase,
+  purchaseUpdatedListener,
+  purchaseErrorListener,
+  PRODUCT_ID,
+  type Purchase,
+} from '../utils/billing';
 
 interface LicenseState {
   loading: boolean;
@@ -16,9 +28,13 @@ interface LicenseState {
   showPaywall: boolean;
   openPaywall: () => void;
   closePaywall: () => void;
-  /** 功能入口的守門員：可用回傳 true，否則跳付費牆並回傳 false */
   requireAccess: () => boolean;
-  markPurchased: () => Promise<void>;
+  /** 商品的當地價格字串，例如 "NT$39.00"；取不到時為 null */
+  localizedPrice: string | null;
+  purchasing: boolean;
+  restoring: boolean;
+  buy: () => Promise<void>;
+  restore: () => Promise<boolean>;
 }
 
 const LicenseContext = createContext<LicenseState | null>(null);
@@ -30,18 +46,76 @@ export function LicenseProvider({children}: {children: React.ReactNode}) {
   const [isExpired, setIsExpired] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
+  const [localizedPrice, setLocalizedPrice] = useState<string | null>(null);
+  const [purchasing, setPurchasing] = useState(false);
+  const [restoring, setRestoring] = useState(false);
+
+  const purchasedRef = useRef(false);
+
+  const applyPurchased = async () => {
+    purchasedRef.current = true;
+    await setLocalPurchased(true);
+    setIsPurchased(true);
+    setShowPaywall(false);
+    setPurchasing(false);
+  };
 
   useEffect(() => {
-    (async () => {
-      const purchased = await getLocalPurchased();
-      const trial = await initTrial();
+    let updateSub: any;
+    let errorSub: any;
 
-      setIsPurchased(purchased);
+    (async () => {
+      // 1. 先讀本機快取，讓畫面能立刻反應
+      const cached = await getLocalPurchased();
+      setIsPurchased(cached);
+      purchasedRef.current = cached;
+
+      // 2. 試用期狀態
+      const trial = await initTrial();
       setDaysRemaining(trial.daysRemaining);
       setIsExpired(trial.isExpired);
-      setShowWelcome(trial.isFirstLaunch && !purchased);
+      setShowWelcome(trial.isFirstLaunch && !cached);
       setLoading(false);
+
+      // 3. 連上 Google Play（失敗不影響 App 使用）
+      try {
+        await initBilling();
+
+        updateSub = purchaseUpdatedListener(async (purchase: Purchase) => {
+          if (purchase.productId !== PRODUCT_ID) return;
+          await acknowledgePurchase(purchase);
+          await applyPurchased();
+        });
+
+        errorSub = purchaseErrorListener(() => {
+          setPurchasing(false);
+        });
+
+        // 4. 以 Google 的紀錄為準，還原購買狀態
+        const owned = await checkPurchased();
+        if (owned && !purchasedRef.current) {
+          await applyPurchased();
+        }
+
+        // 5. 取得當地價格
+        const product = await fetchProduct();
+        if (product) {
+          setLocalizedPrice(
+            (product as any).localizedPrice ??
+              (product as any).oneTimePurchaseOfferDetails?.formattedPrice ??
+              null,
+          );
+        }
+      } catch {
+        // 離線或 Billing 不可用，靜默忽略，沿用本機狀態
+      }
     })();
+
+    return () => {
+      updateSub?.remove();
+      errorSub?.remove();
+      closeBilling();
+    };
   }, []);
 
   const requireAccess = (): boolean => {
@@ -50,10 +124,27 @@ export function LicenseProvider({children}: {children: React.ReactNode}) {
     return false;
   };
 
-  const markPurchased = async () => {
-    await setLocalPurchased(true);
-    setIsPurchased(true);
-    setShowPaywall(false);
+  const buy = async () => {
+    setPurchasing(true);
+    try {
+      await purchaseUnlock();
+      // 成功會由 purchaseUpdatedListener 接手
+    } catch {
+      setPurchasing(false);
+    }
+  };
+
+  const restore = async (): Promise<boolean> => {
+    setRestoring(true);
+    try {
+      const owned = await checkPurchased();
+      if (owned) await applyPurchased();
+      return owned;
+    } catch {
+      return false;
+    } finally {
+      setRestoring(false);
+    }
   };
 
   return (
@@ -69,7 +160,11 @@ export function LicenseProvider({children}: {children: React.ReactNode}) {
         openPaywall: () => setShowPaywall(true),
         closePaywall: () => setShowPaywall(false),
         requireAccess,
-        markPurchased,
+        localizedPrice,
+        purchasing,
+        restoring,
+        buy,
+        restore,
       }}>
       {children}
     </LicenseContext.Provider>

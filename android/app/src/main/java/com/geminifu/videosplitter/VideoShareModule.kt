@@ -1,4 +1,4 @@
-package com.videosplitter
+package com.geminifu.videosplitter
 
 import android.content.Intent
 import android.net.Uri

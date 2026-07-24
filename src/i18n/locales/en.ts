@@ -61,5 +61,8 @@ export default {
   priceNote: 'One-time payment, unlocked forever',
   purchase: 'Unlock Now',
   restore: 'Restore Purchase',
+  restoring: 'Restoring…',
+  restoreFailed: 'No Purchase Found',
+  restoreFailedMsg: 'No purchase was found for this Google account. Make sure you are signed in with the account you used to buy.',
 },
 };

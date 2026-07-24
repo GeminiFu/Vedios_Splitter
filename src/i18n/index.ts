@@ -24,6 +24,11 @@ const getDeviceLanguage = (): string => {
     if (SUPPORTED_LANGUAGES.includes(normalized)) {
       return normalized;
     }
+    
+    // 特例：新加坡、馬來西亞的中文使用者習慣簡體
+    if (normalized === 'zh-SG' || normalized === 'zh-MY') {
+      return 'zh-CN';
+    }
 
     const prefix = normalized.split('-')[0];
     const matched = SUPPORTED_LANGUAGES.find(lang => lang.startsWith(prefix));
